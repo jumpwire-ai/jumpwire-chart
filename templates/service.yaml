@@ -1,0 +1,57 @@
+{{- $annotations := .Values.service.annotations -}}
+{{- if eq .Values.cloud "gke" }}
+  {{- if .Values.gke.ingressNeg }}
+    {{- $_ := set $annotations "cloud.google.com/neg" "{\"ingress\": true}" -}}
+  {{- else }}
+    {{- $_ := set $annotations "cloud.google.com/neg" "{\"ingress\": false}" -}}
+  {{- end }}
+{{- end }}
+{{- if .Values.service.externalDns }}
+  {{- $_ := set $annotations "external-dns.alpha.kubernetes.io/hostname" .Values.domain -}}
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jumpwire.fullname" . }}
+  labels:
+    {{- include "jumpwire.labels" . | nindent 4 }}
+  annotations:
+    {{- $annotations | toYaml | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 443
+      targetPort: https
+      protocol: TCP
+      name: https
+    - port: 5432
+      targetPort: postgres
+      protocol: TCP
+      name: postgres
+    - port: 3306
+      targetPort: mysql
+      protocol: TCP
+      name: mysql
+  selector:
+    {{- include "jumpwire.selectorLabels" . | nindent 4 }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jumpwire.fullname" . }}-cluster
+  labels:
+    {{- include "jumpwire.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.clusterService.type }}
+  ports:
+    - port: {{ .Values.clusterService.port }}
+      targetPort: beam
+      protocol: TCP
+      name: beam
+  selector:
+    {{- include "jumpwire.selectorLabels" . | nindent 4 }}

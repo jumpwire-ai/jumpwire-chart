@@ -1,0 +1,45 @@
+{{- if .Values.certificate.create }}
+{{- $name := include "jumpwire.fullname" . -}}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jumpwire.labels" . | nindent 4 }}
+spec:
+  secretName: {{ $name }}-tls
+  secretTemplate:
+    labels:
+      {{- include "jumpwire.labels" . | nindent 6 }}
+
+  duration: {{ .Values.certificate.duration }}
+  renewBefore: {{ .Values.certificate.renewBefore }}
+  subject:
+    organizations:
+      {{- .Values.certificate.organizations | toYaml | nindent 6 }}
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 4096
+  usages:
+    - server auth
+  dnsNames:
+    - {{ .Values.domain }}
+  issuerRef:
+    {{- .Values.certificate.issuerRef | toYaml | nindent 4 }}
+{{- end }}
+
+---
+{{- if or (.Values.tls.cert) (.Values.tls.key) }}
+{{- $fullName := include "jumpwire.fullname" . -}}
+kind: Secret
+apiVersion: v1
+metadata:
+  name: {{ $fullName }}-tls
+  labels:
+    {{- include "jumpwire.labels" . | nindent 4 }}
+data:
+  tls.cert: {{ .Values.tls.cert | b64enc }}
+  tls.key: {{ .Values.tls.key | b64enc }}
+{{- end }}

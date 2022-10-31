@@ -1,0 +1,128 @@
+{{- $fullName := include "jumpwire.fullname" . -}}
+{{- $securityContext := .Values.securityContext -}}
+{{- if and (not .Values.quantum.enabled) (not (hasKey $securityContext "runAsUser")) }}
+  {{- $_ := set $securityContext "runAsUser" 1000 -}}
+{{- end }}
+{{ $isCertPresent := or (.Values.certificate.create) (.Values.tls.cert) (.Values.tls.key) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "jumpwire.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "jumpwire.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jumpwire.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "jumpwire.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 4369
+              name: beam
+            - containerPort: 4000
+              name: http
+            - containerPort: 4040
+              name: https
+            - containerPort: 5432
+              name: postgres
+            - containerPort: 3306
+              name: mysql
+            - containerPort: {{ .Values.healthcheck.port }}
+              name: healthcheck
+          livenessProbe:
+            tcpSocket:
+              port: healthcheck
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: healthcheck
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml $securityContext | nindent 12 }}
+          env:
+            - name: JUMPWIRE_CLOUD
+              value: kubernetes
+            - name: JUMPWIRE_NODE
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: JUMPWIRE_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: JUMPWIRE_CLUSTER
+              value: {{ .Values.cluster }}
+            {{- if $isCertPresent }}
+            - name: JUMPWIRE_TLS_CERT
+              value: /etc/tls/tls.crt
+            - name: JUMPWIRE_TLS_KEY
+              value: /etc/tls/tls.key
+            {{- end }}
+            {{- if .Values.vault.ca_secret }}
+            - name: VAULT_CACERT
+              value: /vault/tls/ca.crt
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ $fullName }}
+            - secretRef:
+                name: {{ $fullName }}-secrets
+          volumeMounts:
+            {{- if $isCertPresent }}
+            - name: certificates
+              mountPath: /etc/tls
+              readOnly: true
+            {{- end }}
+            {{- if .Values.vault.ca_secret }}
+            - name: vault-ca
+              mountPath: /vault/tls
+              readOnly: true
+            {{- end }}
+      volumes:
+        {{- if $isCertPresent }}
+        - name: certificates
+          secret:
+            secretName: {{ $fullName }}-tls
+        {{- end }}
+        {{- if .Values.vault.ca_secret }}
+        - name: vault-ca
+          secret:
+            secretName: {{ .Values.vault.ca_secret }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

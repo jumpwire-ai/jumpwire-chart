@@ -1,0 +1,9 @@
+# Execute Variable Validations.
+
+# CAUTION: This is a helm hack.
+# The validation function invocations must be yaml commented out.
+# Otherwise, there will be golang runtime error
+# This workaround allows go parser to be happy while still fishing out invalid values
+
+#{{ required "Cluster token is required! Please set `.Values.token`." .Values.token }}
+#{{ required "Domain is required! Please set `.Values.domain`." .Values.domain }}

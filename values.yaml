@@ -1,0 +1,139 @@
+# Default values for jumpwire.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: jumpwire/jumpwire
+  pullPolicy: IfNotPresent
+  tag: "1.0.4"
+
+domain: ""
+frontend:
+  secure: true
+  host: app.jumpwire.ai
+quantum:
+  enabled: false
+  secure: true
+  host: quantum.jumpwire.cloud
+token: ""
+aws:
+  access_key_id: ""
+  secret_access_key: ""
+  region: ""
+encryptionKey: ""
+cluster: default
+log_level: info
+
+vault:
+  # Either app_role or token must be configured to enable Vault
+  app_role:
+    role_id: ""
+    secret_id: ""
+  token: ""
+  ca_secret: ""
+  kv_path: secret/jumpwire
+  db_path: database
+  address: https://vault:8200
+
+# Environment tag to use for error collection
+environment: ""
+
+remote_debug: false
+
+sentry:
+  dsn: ""
+
+honeybadger:
+  api_key: ""
+
+healthcheck:
+  port: 4322
+
+# Automatic certificate issuance.
+certificate:
+  create: false
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  organizations: []
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+# Manual way of providing certificates (content).
+tls:
+  cert: ""
+  key: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+  externalDns: false
+
+clusterService:
+  type: ClusterIP
+  port: 4369
+
+cloud: gke
+gke:
+  managedCertificate: true
+  redirectHttps: true
+  ingressNeg: true
+
+ingress:
+  enabled: false
+  annotations: {}
+  className: ""
+  hosts: []
+  tls: []
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

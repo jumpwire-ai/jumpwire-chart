@@ -1,0 +1,64 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "jumpwire.fullname" . }}
+  labels:
+    {{- include "jumpwire.labels" . | nindent 4 }}
+data:
+  {{- if .Values.frontend.secure }}
+  JUMPWIRE_FRONTEND: wss://{{ .Values.frontend.host }}
+  {{- else }}
+  JUMPWIRE_FRONTEND: ws://{{ .Values.frontend.host }}
+  {{- end }}
+  {{- if .Values.quantum.secure }}
+  JUMPWIRE_QUANTUM_ENDPOINT: wss://{{ .Values.quantum.host }}/cluster/websocket
+  {{- else }}
+  JUMPWIRE_QUANTUM_ENDPOINT: ws://{{ .Values.quantum.host }}/cluster/websocket
+  {{- end }}
+  {{- if .Values.aws.region }}
+  AWS_REGION: {{ .Values.aws.region }}
+  {{- end }}
+  JUMPWIRE_PROXY_DOMAIN: {{ .Values.domain }}
+  LOG_LEVEL: {{ .Values.log_level }}
+  VAULT_ADDR: {{ .Values.vault.address }}
+  VAULT_KV_PATH: {{ .Values.vault.kv_path }}
+  VAULT_DB_PATH: {{ .Values.vault.db_path }}
+  {{- if .Values.environment }}
+  JUMPWIRE_ENV: {{ .Values.environment }}
+  {{- end }}
+  {{- if .Values.remote_debug }}
+  JUMPWIRE_REMOTE_DEBUG: {{ .Values.remote_debug }}
+  {{- end }}
+  {{- if .Values.sentry.dsn }}
+  SENTRY_DSN: {{ .Values.sentry.dsn }}
+  {{- end }}
+  {{- if .Values.honeybadger.api_key }}
+  HONEYBADGER_API_KEY: {{ .Values.honeybadger.api_key }}
+  {{- end }}
+  {{- if .Values.healthcheck.port }}
+  JUMPWIRE_HEALTHCHECK_PORT: {{ .Values.healthcheck.port | quote }}
+  {{- end }}
+  # List of other env variables, so far unused in this chart:
+  #AWS_WEB_IDENTITY_TOKEN_FILE:
+  #JUMPWIRE_AUDIT_LOG_PATH:
+  #JUMPWIRE_CLOUDWATCH_ENABLED:
+  #JUMPWIRE_CLOUDWATCH_INTERVAL_SECONDS:
+  #JUMPWIRE_DATABASE_MIGRATION_LIMIT:
+  #JUMPWIRE_ENCRYPTION_KEY_FILE:
+  #JUMPWIRE_ENCRYPTION_KEY_SALT:
+  #JUMPWIRE_EVENTS_FILE:
+  #JUMPWIRE_HTTP_PORT:
+  #JUMPWIRE_HTTPS_PORT:
+  #JUMPWIRE_MYSQL_PROXY_PORT:
+  #JUMPWIRE_POSTGRES_PROXY_PORT:
+  #JUMPWIRE_PROMETHEUS_PORT:
+  #JUMPWIRE_SEND_LOGS:
+  #JUMPWIRE_STATSD_HOST:
+  #JUMPWIRE_STATSD_PORT:
+  #JUMPWIRE_STATSD_PREFIX:
+  #JUMPWIRE_STATSD_SOCKET:
+  #JUMPWIRE_STATSD_TYPE:
+  #JUMPWIRE_TLS_CA:
+  #JUMPWIRE_TLS_PROXY_CA:
+  #VAULT_KV_VERSION:
+  #VAULT_SKIP_VERIFY:
