@@ -92,7 +92,9 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  http: 80
+  postgres: 5432
+  mysql: 3306
   annotations: {}
   externalDns: false
 
@@ -104,14 +106,15 @@ cloud: gke
 gke:
   managedCertificate: true
   redirectHttps: true
-  ingressNeg: true
+
+  # ingress, ports, or false/null
+  neg: ports
 
 ingress:
   enabled: false
+  tls: true
   annotations: {}
   className: ""
-  hosts: []
-  tls: []
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

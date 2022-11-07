@@ -1,10 +1,25 @@
 {{- $annotations := .Values.service.annotations -}}
 {{- if eq .Values.cloud "gke" }}
-  {{- if .Values.gke.ingressNeg }}
+  {{- if eq .Values.gke.neg "ingress" }}
     {{- $_ := set $annotations "cloud.google.com/neg" "{\"ingress\": true}" -}}
+  {{- else if eq .Values.gke.neg "ports" }}
+    {{- $_ := set $annotations "cloud.google.com/neg" "{\"exposed_ports\": {\"5432\": {}}}" -}}
   {{- else }}
     {{- $_ := set $annotations "cloud.google.com/neg" "{\"ingress\": false}" -}}
   {{- end }}
+
+  {{- if eq .Values.service.type "LoadBalancer" }}
+    {{- if .Values.service.external }}
+      {{- $_ := set $annotations "cloud.google.com/l4-rbs" "enabled" }}
+    {{- else }}
+      {{- if and .Values.ingress.className (semverCompare ">=1.17-0" .Capabilities.KubeVersion.GitVersion) }}
+        {{- $_ := set $annotations "networking.gke.io/load-balancer-type" "Internal" }}
+      {{- else }}
+        {{- $_ := set $annotations "cloud.google.com/load-balancer-type" "Internal" }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
 {{- end }}
 {{- if .Values.service.externalDns }}
   {{- $_ := set $annotations "external-dns.alpha.kubernetes.io/hostname" .Values.domain -}}
@@ -20,19 +35,15 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.service.http }}
       targetPort: http
       protocol: TCP
       name: http
-    - port: 443
-      targetPort: https
-      protocol: TCP
-      name: https
-    - port: 5432
+    - port: {{ .Values.service.postgres }}
       targetPort: postgres
       protocol: TCP
       name: postgres
-    - port: 3306
+    - port: {{ .Values.service.mysql }}
       targetPort: mysql
       protocol: TCP
       name: mysql
