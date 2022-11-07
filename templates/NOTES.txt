@@ -4,11 +4,7 @@ Dashboard is available at http{{ if $.Values.frontend.secure }}s{{ end }}://{{ $
 
 {{- if .Values.ingress.enabled }}
 The JumpWire engine/proxy will be running at:
-{{- range $host := .Values.ingress.hosts }}
-  {{- range .paths }}
-  - http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
-  {{- end }}
-{{- end }}
+  - http{{ if .Values.ingress.tls }}s{{ end }}://{{ .Values.domain }}/
 Please make sure your domain DNS records are pointing to Ingress IP.
 {{- else }}
 Get the JumpWire engine/proxy URL by running these commands:
