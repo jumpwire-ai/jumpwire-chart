@@ -35,9 +35,6 @@ data:
   {{- if .Values.honeybadger.api_key }}
   HONEYBADGER_API_KEY: {{ .Values.honeybadger.api_key }}
   {{- end }}
-  {{- if .Values.healthcheck.port }}
-  JUMPWIRE_HEALTHCHECK_PORT: {{ .Values.healthcheck.port | quote }}
-  {{- end }}
   # List of other env variables, so far unused in this chart:
   #AWS_WEB_IDENTITY_TOKEN_FILE:
   #JUMPWIRE_AUDIT_LOG_PATH:
@@ -45,7 +42,6 @@ data:
   #JUMPWIRE_CLOUDWATCH_INTERVAL_SECONDS:
   #JUMPWIRE_DATABASE_MIGRATION_LIMIT:
   #JUMPWIRE_ENCRYPTION_KEY_FILE:
-  #JUMPWIRE_ENCRYPTION_KEY_SALT:
   #JUMPWIRE_EVENTS_FILE:
   #JUMPWIRE_HTTP_PORT:
   #JUMPWIRE_HTTPS_PORT:

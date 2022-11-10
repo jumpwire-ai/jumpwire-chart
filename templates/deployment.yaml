@@ -48,17 +48,17 @@ spec:
               name: postgres
             - containerPort: 3306
               name: mysql
-            - containerPort: {{ .Values.healthcheck.port }}
-              name: healthcheck
           livenessProbe:
-            tcpSocket:
-              port: healthcheck
-            initialDelaySeconds: 15
+            httpGet:
+              port: http
+              path: /_jumpwire/status
+            initialDelaySeconds: 10
             periodSeconds: 20
           readinessProbe:
-            tcpSocket:
-              port: healthcheck
-            initialDelaySeconds: 15
+            httpGet:
+              port: http
+              path: /_jumpwire/status
+            initialDelaySeconds: 10
             periodSeconds: 20
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

@@ -48,9 +48,6 @@ sentry:
 honeybadger:
   api_key: ""
 
-healthcheck:
-  port: 4322
-
 # Automatic certificate issuance.
 certificate:
   create: false
