@@ -1,5 +1,5 @@
 # JumpWire Helm Chart
 
-This repo contains the Helm chart for deplopying [JumpWire](https://jumpwire.ai).
+This repo contains the Helm chart for deploying [JumpWire](https://jumpwire.io).
 
-Instructions for using and configuring the chart are [available in the JumpWire documentation](https://docs.jumpwire.ai/self-hosting-with-helm).
+Instructions for using and configuring the chart are [available in the JumpWire documentation](https://docs.jumpwire.io/self-hosting-with-helm).

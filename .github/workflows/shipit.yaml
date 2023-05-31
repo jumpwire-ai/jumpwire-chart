@@ -34,5 +34,5 @@ jobs:
         run: helm package .
       - name: Upload chart
         run: |
-          helm repo add jumpwire gs://charts.jumpwire.ai
-          helm gcs push jumpwire-*.tgz jumpwire --public --publicUrl https://charts.jumpwire.ai/ --retry
+          helm repo add jumpwire gs://charts.jumpwire.io
+          helm gcs push jumpwire-*.tgz jumpwire --public --publicUrl https://charts.jumpwire.io/ --retry

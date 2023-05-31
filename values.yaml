@@ -12,7 +12,7 @@ image:
 domain: ""
 frontend:
   secure: true
-  host: app.jumpwire.ai
+  host: app.jumpwire.io
 quantum:
   enabled: false
   secure: true
