@@ -48,7 +48,7 @@ app.kubernetes.io/name: {{ include "jumpwire.name" . }}
 app.kubernetes.io/component: engine
 app.kubernetes.io/part-of: jumpwire
 app.kubernetes.io/instance: {{ .Release.Name }}
-jumpwire.ai/cluster: {{ .Values.cluster }}
+jumpwire.io/cluster: {{ .Values.cluster }}
 {{- end }}
 
 {{/*
