@@ -1,6 +1,6 @@
 {{- $fullName := include "jumpwire.fullname" . -}}
 {{- $securityContext := .Values.securityContext -}}
-{{- if and (not .Values.quantum.enabled) (not (hasKey $securityContext "runAsUser")) }}
+{{- if (not (hasKey $securityContext "runAsUser")) }}
   {{- $_ := set $securityContext "runAsUser" 1000 -}}
 {{- end }}
 {{ $isCertPresent := or (.Values.certificate.create) (.Values.tls.cert) (.Values.tls.key) -}}
@@ -40,9 +40,9 @@ spec:
           ports:
             - containerPort: 4369
               name: beam
-            - containerPort: 4000
+            - containerPort: 4004
               name: http
-            - containerPort: 4040
+            - containerPort: 4443
               name: https
             - containerPort: 5432
               name: postgres
@@ -51,13 +51,13 @@ spec:
           livenessProbe:
             httpGet:
               port: http
-              path: /_jumpwire/status
+              path: /ping
             initialDelaySeconds: 10
             periodSeconds: 20
           readinessProbe:
             httpGet:
               port: http
-              path: /_jumpwire/status
+              path: /ping
             initialDelaySeconds: 10
             periodSeconds: 20
           resources:
@@ -82,6 +82,8 @@ spec:
               value: /etc/tls/tls.crt
             - name: JUMPWIRE_TLS_KEY
               value: /etc/tls/tls.key
+            - name: JUMPWIRE_TLS_CA
+              value: /etc/tls/ca.crt
             {{- end }}
             {{- if .Values.vault.ca_secret }}
             - name: VAULT_CACERT

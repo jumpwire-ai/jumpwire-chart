@@ -5,23 +5,21 @@
 replicaCount: 2
 
 image:
-  repository: jumpwire/jumpwire
+  repository: ghcr.io/extragoodlabs/jumpwire
   pullPolicy: IfNotPresent
-  tag: "1"
+  tag: latest
 
 domain: ""
 frontend:
-  secure: true
-  host: app.jumpwire.io
-quantum:
   enabled: false
   secure: true
-  host: quantum.jumpwire.cloud
-token: ""
+  host: app.jumpwire.io
+  token: ""
 aws:
   access_key_id: ""
   secret_access_key: ""
   region: ""
+token: ""
 encryptionKey: ""
 cluster: default
 log_level: info
@@ -39,8 +37,6 @@ vault:
 
 # Environment tag to use for error collection
 environment: ""
-
-remote_debug: false
 
 sentry:
   dsn: ""
@@ -61,6 +57,7 @@ certificate:
 tls:
   cert: ""
   key: ""
+  ca: ""
 
 imagePullSecrets: []
 nameOverride: ""
