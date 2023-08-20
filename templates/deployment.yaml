@@ -48,6 +48,8 @@ spec:
               name: postgres
             - containerPort: 3306
               name: mysql
+            - containerPort: 9569
+              name: prometheus
           livenessProbe:
             httpGet:
               port: http

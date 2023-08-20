@@ -47,6 +47,10 @@ spec:
       targetPort: mysql
       protocol: TCP
       name: mysql
+    - port: {{ .Values.service.prometheus }}
+      targetPort: prometheus
+      protocol: TCP
+      name: prometheus
   selector:
     {{- include "jumpwire.selectorLabels" . | nindent 4 }}
 
