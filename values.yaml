@@ -24,6 +24,9 @@ encryptionKey: ""
 cluster: default
 log_level: info
 
+# File containing YAML for setting up objects in JumpWire
+configFile: jumpwire.yaml
+
 vault:
   # Either app_role or token must be configured to enable Vault
   app_role:

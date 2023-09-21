@@ -107,6 +107,9 @@ spec:
               mountPath: /vault/tls
               readOnly: true
             {{- end }}
+            - name: objects
+              mountPath: /etc/jumpwire
+              readOnly: true
       volumes:
         {{- if $isCertPresent }}
         - name: certificates
@@ -118,6 +121,9 @@ spec:
           secret:
             secretName: {{ .Values.vault.ca_secret }}
         {{- end }}
+        - name: objects
+          configMap:
+            name: {{ $fullName }}-objects
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

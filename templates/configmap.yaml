@@ -15,7 +15,7 @@ data:
   {{- if .Values.aws.region }}
   AWS_REGION: {{ .Values.aws.region }}
   {{- end }}
-  JUMPWIRE_PROXY_DOMAIN: {{ .Values.domain }}
+  JUMPWIRE_DOMAIN: {{ .Values.domain }}
   LOG_LEVEL: {{ .Values.log_level }}
   VAULT_ADDR: {{ .Values.vault.address }}
   VAULT_KV_PATH: {{ .Values.vault.kv_path }}
@@ -29,19 +29,17 @@ data:
   {{- if .Values.honeybadger.api_key }}
   HONEYBADGER_API_KEY: {{ .Values.honeybadger.api_key }}
   {{- end }}
+  JUMPWIRE_CONFIG_PATH: /etc/jumpwire
 
   # List of other env variables, so far unused in this chart:
   #AWS_WEB_IDENTITY_TOKEN_FILE:
   #JUMPWIRE_CLOUDWATCH_ENABLED:
   #JUMPWIRE_CLOUDWATCH_INTERVAL_SECONDS:
-  #JUMPWIRE_DATABASE_MIGRATION_LIMIT:
-  #JUMPWIRE_ENCRYPTION_KEY_FILE:
   #JUMPWIRE_HTTP_PORT:
   #JUMPWIRE_HTTPS_PORT:
   #JUMPWIRE_MYSQL_PROXY_PORT:
   #JUMPWIRE_POSTGRES_PROXY_PORT:
   #JUMPWIRE_PROMETHEUS_PORT:
-  #JUMPWIRE_SEND_LOGS:
   #JUMPWIRE_STATSD_HOST:
   #JUMPWIRE_STATSD_PORT:
   #JUMPWIRE_STATSD_PREFIX:
@@ -50,3 +48,13 @@ data:
   #JUMPWIRE_TLS_PROXY_CA:
   #VAULT_KV_VERSION:
   #VAULT_SKIP_VERIFY:
+---
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "jumpwire.fullname" . }}-objects
+  labels:
+    {{- include "jumpwire.labels" . | nindent 4 }}
+data:
+  {{- (.Files.Glob .Values.configFile).AsConfig | nindent 2 }}
