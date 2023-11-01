@@ -30,6 +30,9 @@ data:
   HONEYBADGER_API_KEY: {{ .Values.honeybadger.api_key }}
   {{- end }}
   JUMPWIRE_CONFIG_PATH: /etc/jumpwire
+  {{- if .Values.env }}
+  {{ toYaml .Values.env | nindent 2 }}
+  {{- end }}
 
   # List of other env variables, so far unused in this chart:
   #AWS_WEB_IDENTITY_TOKEN_FILE:

@@ -62,6 +62,8 @@ tls:
   key: ""
   ca: ""
 
+env: {}
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -89,6 +91,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
+  external: false
   http: 80
   postgres: 5432
   mysql: 3306
